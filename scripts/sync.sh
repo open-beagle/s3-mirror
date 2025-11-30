@@ -5,13 +5,9 @@ set -e
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
 
-# 加载环境变量
+# 加载环境变量（如果存在）
 if [ -f "$PROJECT_DIR/.env" ]; then
     source "$PROJECT_DIR/.env"
-else
-    echo "错误: 未找到 .env 文件"
-    echo "请复制 .env.example 为 .env 并配置相关参数"
-    exit 1
 fi
 
 # 验证必需的环境变量
@@ -31,12 +27,6 @@ SYNC_MODE="${SYNC_MODE:-once}"
 SYNC_DIRECTION="${SYNC_DIRECTION:-upload}"
 MC_ALIAS="${MC_ALIAS:-s3mirror}"
 
-# 验证同步方向
-if [[ "$SYNC_DIRECTION" != "upload" && "$SYNC_DIRECTION" != "download" ]]; then
-    log_error "SYNC_DIRECTION 必须是 'upload' 或 'download'"
-    exit 1
-fi
-
 # 日志函数
 log() {
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] $1"
@@ -45,6 +35,12 @@ log() {
 log_error() {
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] ERROR: $1" >&2
 }
+
+# 验证同步方向
+if [[ "$SYNC_DIRECTION" != "upload" && "$SYNC_DIRECTION" != "download" ]]; then
+    log_error "SYNC_DIRECTION 必须是 'upload' 或 'download'"
+    exit 1
+fi
 
 # 配置 mc 别名
 log "配置 MinIO Client 别名..."
