@@ -25,6 +25,13 @@ spec:
         - name: s3-mirror
           image: registry.cn-qingdao.aliyuncs.com/wod/s3-mirror:v1.0.0
           imagePullPolicy: Always
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 256Mi
           env:
             - name: S3_ENDPOINT
               value: "https://s3.example.com"
